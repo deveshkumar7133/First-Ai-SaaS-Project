@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: ai-business-website-generator-api
+    env: node
+    plan: starter
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 20

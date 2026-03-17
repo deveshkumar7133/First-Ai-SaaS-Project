@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  @apply bg-slate-950 text-slate-100 antialiased;
+}
+
+.container-page {
+  @apply mx-auto w-full max-w-6xl px-4;
+}
+
+/* Bolt-like layout helpers */
+.bolt-bg {
+  @apply bg-slate-950;
+  background-image: radial-gradient(circle at 20% 15%, rgba(99, 102, 241, 0.22), transparent 55%),
+    radial-gradient(circle at 70% 55%, rgba(56, 189, 248, 0.16), transparent 50%);
+}
+
+.bolt-surface {
+  @apply rounded-2xl border border-slate-800/70 bg-slate-950/40 backdrop-blur;
+}
+
+.bolt-panel {
+  @apply rounded-2xl border border-slate-800/70 bg-slate-900/30 shadow-soft;
+}
+
+.bolt-muted {
+  @apply text-slate-300/80;
+}
+
