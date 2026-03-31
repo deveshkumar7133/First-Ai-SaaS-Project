@@ -1,9 +1,13 @@
 "use client";
 
+import { sectionSurfaceStyle } from "../../../lib/siteTheme";
 import { Button } from "../../Button";
 
-export function GallerySection({ content, editable, onChange, onDelete }) {
+export function GallerySection({ content, theme, editable, onChange, onDelete }) {
   const images = Array.isArray(content?.images) ? content.images : [];
+  const variant = String(content?.variant || "").toLowerCase();
+  const isBento = variant.includes("bento");
+  const isStrip = variant.includes("strip");
 
   function addImage() {
     onChange?.({ ...content, images: [...images, { src: "image.jpg", alt: "Image description" }] });
@@ -18,9 +22,11 @@ export function GallerySection({ content, editable, onChange, onDelete }) {
   }
 
   return (
-    <section className="rounded-2xl border border-slate-800/70 bg-slate-950/35 p-8 shadow-soft" id="gallery">
+    <section className="p-8" id="gallery" style={sectionSurfaceStyle(theme)}>
       <div className="flex items-start justify-between gap-3">
-        <div className="text-xs text-slate-400">Gallery</div>
+        <div className="text-xs" style={{ opacity: 0.65 }}>
+          Gallery
+        </div>
         {editable ? (
           <div className="flex gap-2">
             <Button variant="secondary" type="button" onClick={addImage}>
@@ -68,12 +74,36 @@ export function GallerySection({ content, editable, onChange, onDelete }) {
         </div>
       ) : (
         <>
-          <h2 className="mt-3 text-2xl font-semibold tracking-tight">{content?.title}</h2>
-          <div className="mt-6 grid gap-4 md:grid-cols-3">
+          <h2 className="mt-3 text-2xl font-semibold tracking-tight" style={{ color: "var(--site-text)" }}>
+            {content?.title}
+          </h2>
+          <div
+            className={
+              isStrip
+                ? "mt-6 grid gap-3 md:grid-cols-4"
+                : isBento
+                  ? "mt-6 grid gap-3 md:grid-cols-4"
+                  : "mt-6 grid gap-4 md:grid-cols-3"
+            }
+          >
             {images.map((img, i) => (
-              <div key={i} className="rounded-2xl border border-slate-800/70 bg-slate-950/40 p-5">
-                <div className="text-sm font-semibold">{img?.alt}</div>
-                <div className="mt-2 text-xs text-slate-300/70">{img?.src}</div>
+              <div
+                key={i}
+                className="p-5"
+                style={{
+                  borderRadius: "var(--site-radius)",
+                  border: "1px solid var(--site-border)",
+                  background: "color-mix(in srgb, var(--site-surface) 86%, transparent)",
+                  gridColumn: isBento && i === 0 ? "span 2 / span 2" : undefined,
+                  gridRow: isBento && i === 0 ? "span 2 / span 2" : undefined
+                }}
+              >
+                <div className="text-sm font-semibold" style={{ color: "var(--site-text)" }}>
+                  {img?.alt}
+                </div>
+                <div className="mt-2 text-xs" style={{ color: "var(--site-muted)" }}>
+                  {img?.src}
+                </div>
               </div>
             ))}
           </div>

@@ -7,6 +7,7 @@ import websiteRoutes from "./routes/websites.js";
 import usageRoutes from "./routes/usage.js";
 import paymentRoutes from "./routes/payment.js";
 import { connectDb } from "./config/db.js";
+import { isSMTPConfigured, verifySMTPOnStartup } from "./utils/email.js";
 
 const app = express();
 
@@ -30,6 +31,13 @@ const port = process.env.PORT || 8080;
 
 async function start() {
   await connectDb(process.env.MONGODB_URI);
+  if (process.env.NODE_ENV === "production" && !isSMTPConfigured()) {
+    // eslint-disable-next-line no-console
+    console.warn(
+      "[email] Production mode but SMTP is not configured — OTP will only print in logs. Set SMTP_SERVICE=gmail + SMTP_USER + SMTP_PASS + EMAIL_FROM."
+    );
+  }
+  await verifySMTPOnStartup();
   app.listen(port, () => {
     // eslint-disable-next-line no-console
     console.log(`API listening on :${port}`);

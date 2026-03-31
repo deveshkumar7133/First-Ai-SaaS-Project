@@ -1,14 +1,26 @@
 "use client";
 
+import { sectionSurfaceStyle } from "../../../lib/siteTheme";
 import { Button } from "../../Button";
 
 export function HeroSection({ content, theme, editable, onChange, onDelete }) {
   const primary = theme?.primaryColor || "#6366f1";
+  const secondary = theme?.secondaryColor || theme?.accentColor || primary;
+  const variant = String(content?.variant || "").toLowerCase();
+
+  const isSplit = variant.includes("split");
+  const isPoster = variant.includes("poster") || variant.includes("bold");
+  const heroBg =
+    variant.includes("gradient") || variant.includes("poster")
+      ? `radial-gradient(circle at 20% 15%, ${primary}33, transparent 55%), radial-gradient(circle at 80% 70%, ${secondary}22, transparent 60%)`
+      : undefined;
 
   return (
-    <section className="rounded-2xl border border-slate-800/70 bg-slate-950/35 p-8 shadow-soft">
+    <section className="p-8" style={{ ...sectionSurfaceStyle(theme), backgroundImage: heroBg }}>
       <div className="flex items-start justify-between gap-3">
-        <div className="text-xs text-slate-400">Hero</div>
+        <div className="text-xs" style={{ opacity: 0.65 }}>
+          Hero
+        </div>
         {editable ? (
           <Button variant="secondary" type="button" onClick={onDelete}>
             Delete
@@ -40,19 +52,55 @@ export function HeroSection({ content, theme, editable, onChange, onDelete }) {
         </div>
       ) : (
         <>
-          <h1 className="mt-3 text-4xl font-semibold tracking-tight text-slate-50">{content?.headline}</h1>
-          <p className="mt-4 max-w-2xl text-lg text-slate-300/90">{content?.subtext}</p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <a
-              href="#contact"
-              className="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold text-slate-950"
-              style={{ background: primary }}
-            >
-              {content?.cta || "Contact"}
-            </a>
-            <a href="#services" className="inline-flex items-center justify-center rounded-xl border border-slate-800/70 bg-slate-950/40 px-4 py-2 text-sm font-semibold">
-              Explore
-            </a>
+          <div className={isSplit ? "mt-3 grid gap-6 md:grid-cols-2 md:items-center" : "mt-3"}>
+            <div>
+              <h1
+                className={isPoster ? "text-5xl font-semibold tracking-tight md:text-6xl" : "text-4xl font-semibold tracking-tight"}
+                style={{ color: "var(--site-text)" }}
+              >
+                {content?.headline}
+              </h1>
+              <p className="mt-4 max-w-2xl text-lg" style={{ color: "var(--site-muted)" }}>
+                {content?.subtext}
+              </p>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <a
+                  href="#contact"
+                  className="inline-flex items-center justify-center px-4 py-2 text-sm font-semibold"
+                  style={{
+                    borderRadius: "var(--site-radius)",
+                    background: "var(--site-primary)",
+                    color: "#0b1020"
+                  }}
+                >
+                  {content?.cta || "Contact"}
+                </a>
+                <a
+                  href="#services"
+                  className="inline-flex items-center justify-center border px-4 py-2 text-sm font-semibold"
+                  style={{
+                    borderRadius: "var(--site-radius)",
+                    borderColor: "var(--site-border)",
+                    background: "color-mix(in srgb, var(--site-surface) 70%, transparent)",
+                    color: "var(--site-text)"
+                  }}
+                >
+                  Explore
+                </a>
+              </div>
+            </div>
+            {isSplit ? (
+              <div
+                className="hidden md:block"
+                style={{
+                  borderRadius: "var(--site-radius)",
+                  border: "1px solid var(--site-border)",
+                  background:
+                    "linear-gradient(135deg, color-mix(in srgb, var(--site-primary) 25%, transparent), color-mix(in srgb, var(--site-accent) 18%, transparent))",
+                  height: 220
+                }}
+              />
+            ) : null}
           </div>
         </>
       )}

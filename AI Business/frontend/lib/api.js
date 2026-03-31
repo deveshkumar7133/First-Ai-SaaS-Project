@@ -81,9 +81,16 @@ async function requestText(path, { auth = true } = {}) {
 export const api = {
   signup: (payload) => request("/auth/signup", { method: "POST", body: payload, auth: false }),
   login: (payload) => request("/auth/login", { method: "POST", body: payload, auth: false }),
+  verifyLogin: (payload) => request("/auth/verify-login", { method: "POST", body: payload, auth: false }),
+  resendLoginOtp: (payload) => request("/auth/resend-login-otp", { method: "POST", body: payload, auth: false }),
+  forgotPassword: (payload) => request("/auth/forgot-password", { method: "POST", body: payload, auth: false }),
+  resetPassword: (payload) => request("/auth/reset-password", { method: "POST", body: payload, auth: false }),
   getUsage: () => request("/usage"),
   generateContent: (payload) => request("/generate-content", { method: "POST", body: payload }),
-  generateFromPrompt: (prompt) => request("/generate-from-prompt", { method: "POST", body: { prompt } }),
+  generateFromPrompt: (payload) => {
+    if (typeof payload === "string") return request("/generate-from-prompt", { method: "POST", body: { prompt: payload } });
+    return request("/generate-from-prompt", { method: "POST", body: payload });
+  },
   createWebsite: (payload) => request("/websites", { method: "POST", body: payload }),
   updateWebsite: (id, patch) => request(`/websites/${id}`, { method: "PATCH", body: patch }),
   listWebsites: () => request("/websites"),
@@ -91,6 +98,7 @@ export const api = {
   exportWebsite: (id) => download(`/websites/${id}/export`),
   exportWebsiteHtml: (id) => requestText(`/websites/${id}/export?format=html`),
   exportWebsiteJson: (id) => request(`/websites/${id}/export?format=json`),
+  regenerateWebsite: (id) => request(`/websites/${id}/regenerate`, { method: "POST", body: {} }),
   createOrder: (payload) => request("/create-order", { method: "POST", body: payload }),
   verifyPayment: (payload) => request("/verify-payment", { method: "POST", body: payload })
 };

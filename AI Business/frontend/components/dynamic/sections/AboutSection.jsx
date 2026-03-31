@@ -1,12 +1,18 @@
 "use client";
 
+import { sectionSurfaceStyle } from "../../../lib/siteTheme";
 import { Button } from "../../Button";
 
-export function AboutSection({ content, editable, onChange, onDelete }) {
+export function AboutSection({ content, theme, editable, onChange, onDelete }) {
+  const variant = String(content?.variant || "").toLowerCase();
+  const isSplit = variant.includes("split");
+
   return (
-    <section className="rounded-2xl border border-slate-800/70 bg-slate-950/35 p-8 shadow-soft" id="about">
+    <section className="p-8" id="about" style={sectionSurfaceStyle(theme)}>
       <div className="flex items-start justify-between gap-3">
-        <div className="text-xs text-slate-400">About</div>
+        <div className="text-xs" style={{ opacity: 0.65 }}>
+          About
+        </div>
         {editable ? (
           <Button variant="secondary" type="button" onClick={onDelete}>
             Delete
@@ -32,8 +38,28 @@ export function AboutSection({ content, editable, onChange, onDelete }) {
         </div>
       ) : (
         <>
-          <h2 className="mt-3 text-2xl font-semibold tracking-tight">{content?.title}</h2>
-          <p className="mt-3 text-slate-300/90">{content?.description}</p>
+          <div className={isSplit ? "mt-3 grid gap-6 md:grid-cols-2 md:items-start" : "mt-3"}>
+            <div>
+              <h2 className="text-2xl font-semibold tracking-tight" style={{ color: "var(--site-text)" }}>
+                {content?.title}
+              </h2>
+              <p className="mt-3" style={{ color: "var(--site-muted)" }}>
+                {content?.description}
+              </p>
+            </div>
+            {isSplit ? (
+              <div
+                className="hidden md:block"
+                style={{
+                  borderRadius: "var(--site-radius)",
+                  border: "1px solid var(--site-border)",
+                  background:
+                    "linear-gradient(180deg, color-mix(in srgb, var(--site-surface) 82%, transparent), color-mix(in srgb, var(--site-primary) 12%, transparent))",
+                  height: 200
+                }}
+              />
+            ) : null}
+          </div>
         </>
       )}
     </section>

@@ -1,14 +1,20 @@
 "use client";
 
+import { sectionSurfaceStyle } from "../../../lib/siteTheme";
 import { Button } from "../../Button";
 
 export function CtaSection({ content, theme, editable, onChange, onDelete }) {
   const primary = theme?.primaryColor || "#6366f1";
+  const accent = theme?.accentColor || primary;
+  const variant = String(content?.variant || "").toLowerCase();
+  const isBanner = variant.includes("banner");
 
   return (
-    <section className="rounded-2xl border border-slate-800/70 bg-slate-950/35 p-8 shadow-soft">
+    <section className="p-8" style={sectionSurfaceStyle(theme)}>
       <div className="flex items-start justify-between gap-3">
-        <div className="text-xs text-slate-400">CTA</div>
+        <div className="text-xs" style={{ opacity: 0.65 }}>
+          CTA
+        </div>
         {editable ? (
           <Button variant="secondary" type="button" onClick={onDelete}>
             Delete
@@ -39,14 +45,27 @@ export function CtaSection({ content, theme, editable, onChange, onDelete }) {
           />
         </div>
       ) : (
-        <div className="rounded-2xl border border-slate-800/70 bg-slate-950/40 p-6">
-          <div className="text-xl font-semibold">{content?.title}</div>
-          <div className="mt-2 text-sm text-slate-300/80">{content?.description}</div>
+        <div
+          className={isBanner ? "p-6 md:p-7" : "p-6"}
+          style={{
+            borderRadius: "var(--site-radius)",
+            border: "1px solid var(--site-border)",
+            background: isBanner
+              ? `linear-gradient(135deg, ${primary}22, ${accent}14)`
+              : "color-mix(in srgb, var(--site-surface) 86%, transparent)"
+          }}
+        >
+          <div className="text-xl font-semibold" style={{ color: "var(--site-text)" }}>
+            {content?.title}
+          </div>
+          <div className="mt-2 text-sm" style={{ color: "var(--site-muted)" }}>
+            {content?.description}
+          </div>
           <div className="mt-5">
             <a
               href="#contact"
-              className="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold text-slate-950"
-              style={{ background: primary }}
+              className="inline-flex items-center justify-center px-4 py-2 text-sm font-semibold"
+              style={{ borderRadius: "var(--site-radius)", background: "var(--site-primary)", color: "#0b1020" }}
             >
               {content?.cta || "Get started"}
             </a>

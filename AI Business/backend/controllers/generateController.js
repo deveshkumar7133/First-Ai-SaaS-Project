@@ -1,5 +1,5 @@
 import { z } from "zod";
-import Groq from "groq-sdk";
+import OpenAI from "openai";
 import { getUsageForUser, consumePoint } from "../models/Usage.js";
 
 const inputSchema = z.object({
@@ -130,34 +130,29 @@ export async function generateContent(req, res) {
       });
     }
 
-    const apiKey = process.env.GROQ_API_KEY;
+    const apiKey = process.env.OPENAI_API_KEY;
+    const modelName = process.env.OPENAI_MODEL || "gpt-4o-mini";
 
     if (!apiKey) {
-      console.warn("[generateContent] GROQ_API_KEY missing — using mock content");
+      console.warn("[generateContent] OPENAI_API_KEY missing — using mock content");
       const content = buildMockContent(input);
       await consumePoint(req.user.id);
       return res.json({ generatedContent: content, mockFallback: true });
     }
 
-    const client = new Groq({ apiKey });
-    const model = process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
-
+    const client = new OpenAI({ apiKey });
     const response = await client.chat.completions.create({
-      model,
+      model: modelName,
       temperature: 0.7,
-      messages: [
-        { role: "system", content: "Return strict JSON. No markdown. No extra keys." },
-        { role: "user", content: buildPrompt(input) }
-      ],
+      messages: [{ role: "user", content: buildPrompt(input) }],
       response_format: { type: "json_object" }
     });
-
     const raw = response?.choices?.[0]?.message?.content || "{}";
     let json;
     try {
       json = JSON.parse(raw);
     } catch {
-      console.error("[generateContent] Groq returned invalid JSON, falling back to mock");
+      console.error("[generateContent] OpenAI returned invalid JSON, falling back to mock");
       const fallback = buildMockContent(input);
       await consumePoint(req.user.id);
       return res.json({ generatedContent: fallback, mockFallback: true });

@@ -23,11 +23,11 @@ export default function DashboardHome() {
       ) : null}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <Card className="p-6">
-          <div className="text-sm font-semibold">Create a new website</div>
-          <div className="mt-2 text-sm text-slate-300/80">Generate content and preview instantly.</div>
+          <div className="text-sm font-semibold">Create a new product</div>
+          <div className="mt-2 text-sm text-slate-300/80">Generate a website or a mobile app instantly.</div>
           <div className="mt-5">
             <Link href="/build">
-              <Button>Generate Website</Button>
+              <Button>Open Generator</Button>
             </Link>
           </div>
         </Card>

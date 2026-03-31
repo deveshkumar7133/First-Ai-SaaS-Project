@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { api } from "../../../lib/api";
 import { useAuth } from "../../../components/AuthProvider";
 import { SectionRenderer } from "../../../components/dynamic/SectionRenderer";
+import { MobileAppRenderer } from "../../../components/dynamic/MobileAppRenderer";
 import { Button } from "../../../components/Button";
 import { MonacoCodeViewer } from "../../../components/MonacoCodeViewer";
 
@@ -119,7 +120,9 @@ export default function PreviewPage() {
           <div className="min-w-0">
             <div className="truncate text-sm font-semibold">{website.siteName}</div>
             <div className="truncate text-xs text-slate-300/80">
-              Preview • Prompt-based • {website.sections?.length || 0} sections
+              {website?.type === "mobile"
+                ? `Preview • Prompt-based • ${(website.mobileSpec?.screens || []).length} screens`
+                : `Preview • Prompt-based • ${website.sections?.length || 0} sections`}
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -174,7 +177,7 @@ export default function PreviewPage() {
       {tab === "preview" ? (
         <div className="bolt-bg">
           <div className="container-page py-10">
-            <SectionRenderer website={website} />
+            {website?.type === "mobile" ? <MobileAppRenderer appSpec={website.mobileSpec} theme={website.theme} /> : <SectionRenderer website={website} />}
           </div>
         </div>
       ) : (
@@ -183,7 +186,7 @@ export default function PreviewPage() {
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
               <div className="rounded-2xl border border-slate-800/70 bg-slate-950/35 p-4 shadow-soft">
                 <div className="flex items-center justify-between gap-2">
-                  <div className="text-sm font-semibold">index.html</div>
+                  <div className="text-sm font-semibold">{website?.type === "mobile" ? "App.tsx" : "index.html"}</div>
                   <div className="flex gap-2">
                     <Button variant="secondary" type="button" onClick={() => copy(exportHtml)} disabled={!exportHtml || loadingCode}>
                       Copy
@@ -194,7 +197,11 @@ export default function PreviewPage() {
                   </div>
                 </div>
                 <div className="mt-3">
-                  <MonacoCodeViewer value={loadingCode ? "Loading HTML…" : exportHtml || "No HTML yet."} language="html" height="62vh" />
+                  <MonacoCodeViewer
+                    value={loadingCode ? (website?.type === "mobile" ? "Loading RN code…" : "Loading HTML…") : exportHtml || "No code yet."}
+                    language={website?.type === "mobile" ? "tsx" : "html"}
+                    height="62vh"
+                  />
                 </div>
               </div>
 
