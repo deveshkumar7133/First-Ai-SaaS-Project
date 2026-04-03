@@ -159,10 +159,10 @@ Return ONLY valid JSON matching this exact shape:
 }
 
 Screen rules:
-- Always include Home, Login, Signup, Profile, Product, Settings in `screens`.
+- Always include Home, Login, Signup, Profile, Product, Settings in \`screens\`.
 - Include Cart only if the input suggests eCommerce (cart, checkout, order, payment, buy, store). Otherwise omit Cart.
 - Components should be realistic UI structure; no placeholder text like "lorem ipsum".
-- Theme: set `theme.style` to one of: "modern" | "minimal" | "luxury" | "dark" | "colorful", and ensure the palette colors work together (good contrast).
+- Theme: set \`theme.style\` to one of: "modern" | "minimal" | "luxury" | "dark" | "colorful", and ensure the palette colors work together (good contrast).
 - Avoid any text inside images (this is JSON only).`;
 }
 
