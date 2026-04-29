@@ -14,7 +14,7 @@ const PLANS = [
     period: "per month",
     price: "₹0",
     description: "5 content generations per month. Great to try out.",
-    features: ["5 points/month", "All templates", "Save & preview"],
+    features: ["5 points/month", "AI-generated, unique every time", "Save & preview"],
     cta: "Current plan",
     currentKey: "free"
   },
@@ -25,7 +25,7 @@ const PLANS = [
     period: "per month",
     price: "₹299",
     description: "More generations for growing businesses.",
-    features: ["50 points/month", "All templates", "Priority support", "Export options"],
+    features: ["50 points/month", "AI-generated, unique every time", "Priority support", "Export options"],
     cta: "Purchase subscription",
     currentKey: "pro"
   }

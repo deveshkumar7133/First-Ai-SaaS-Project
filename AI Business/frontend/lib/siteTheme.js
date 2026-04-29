@@ -8,6 +8,7 @@ function withFallback(v, fallback) {
 
 export function themeVars(theme) {
   const primary = withFallback(theme?.primaryColor, "#6366f1");
+  const secondary = withFallback(theme?.secondaryColor, primary);
   const background = withFallback(theme?.backgroundColor, "#0f172a");
   const surface = withFallback(theme?.surfaceColor, "rgba(15, 23, 42, 0.5)");
   const text = withFallback(theme?.textColor, "#f8fafc");
@@ -24,6 +25,7 @@ export function themeVars(theme) {
     "--site-muted": muted,
     "--site-border": border,
     "--site-primary": primary,
+    "--site-secondary": secondary,
     "--site-accent": accent,
     "--site-radius": `${Math.max(10, Math.min(26, radius))}px`,
     "--site-shadow": shadow

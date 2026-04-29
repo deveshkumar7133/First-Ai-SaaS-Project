@@ -2,78 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { previewCanvasStyle, themeVars } from "../../lib/siteTheme";
+import { Header } from "./app_components/Header";
+import { Card } from "./app_components/Card";
+import { Input } from "./app_components/Input";
+import { Button } from "./app_components/Button";
 
-function ComponentBlock({ component }) {
-  if (!component || typeof component !== "object") return null;
-  const type = String(component.type || "").toLowerCase();
-
-  if (type === "header") {
-    return (
-      <div style={{ marginBottom: 12 }}>
-        <div style={{ fontWeight: 800, fontSize: 18, color: "var(--site-text)" }}>{component.title || "Header"}</div>
-      </div>
-    );
-  }
-
-  if (type === "card") {
-    return (
-      <div
-        style={{
-          border: "1px solid var(--site-border)",
-          background: "color-mix(in srgb, var(--site-surface) 86%, transparent)",
-          borderRadius: "var(--site-radius)",
-          padding: 14,
-          marginBottom: 12
-        }}
-      >
-        <div style={{ color: "var(--site-text)", fontSize: 14, fontWeight: 700 }}>{component.title || "Card"}</div>
-        {component.content ? (
-          <div style={{ color: "var(--site-muted)", marginTop: 6, fontSize: 13, lineHeight: 1.35 }}>{component.content}</div>
-        ) : null}
-      </div>
-    );
-  }
-
-  if (type === "input") {
-    return (
-      <div style={{ marginBottom: 12 }}>
-        <input
-          placeholder={component.placeholder || "Input"}
-          style={{
-            width: "100%",
-            borderRadius: "var(--site-radius)",
-            border: "1px solid var(--site-border)",
-            background: "color-mix(in srgb, var(--site-surface) 88%, transparent)",
-            padding: "12px 12px",
-            color: "var(--site-text)",
-            outline: "none"
-          }}
-        />
-      </div>
-    );
-  }
-
-  if (type === "button") {
-    return (
-      <button
-        type="button"
-        style={{
-          width: "100%",
-          borderRadius: "var(--site-radius)",
-          padding: "12px 14px",
-          fontWeight: 800,
-          border: "1px solid transparent",
-          background: "var(--site-primary)",
-          color: "#0b1020"
-        }}
-      >
-        {component.text || "Button"}
-      </button>
-    );
-  }
-
-  return null;
-}
+const COMPONENTS_MAP = {
+  header: Header,
+  card: Card,
+  input: Input,
+  button: Button
+};
 
 export function MobileAppRenderer({ appSpec, theme }) {
   const themeStyle = previewCanvasStyle(theme);
@@ -142,9 +81,12 @@ export function MobileAppRenderer({ appSpec, theme }) {
         <div style={{ padding: 18 }}>
           {screens.length ? (
             <>
-              {activeComponents.map((c, idx) => (
-                <ComponentBlock key={`${activeName}-${idx}`} component={c} />
-              ))}
+              {activeComponents.map((c, idx) => {
+                const type = String(c?.type || "").toLowerCase();
+                const Comp = COMPONENTS_MAP[type];
+                if (!Comp) return null;
+                return <Comp key={`${activeName}-${idx}`} component={c} />;
+              })}
             </>
           ) : (
             <div style={{ color: "var(--site-muted)", fontSize: 14 }}>No screens yet.</div>

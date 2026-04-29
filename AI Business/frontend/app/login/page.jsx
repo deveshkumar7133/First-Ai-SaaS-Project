@@ -39,13 +39,7 @@ function clearPendingOtp() {
 
 export default function LoginPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen bg-slate-950 text-slate-100">
-          <div className="container-page py-10">Loading…</div>
-        </div>
-      }
-    >
+    <Suspense fallback={<div className="container-page py-10">Loading…</div>}>
       <LoginPageInner />
     </Suspense>
   );
@@ -55,20 +49,21 @@ function LoginPageInner() {
   const router = useRouter();
   const params = useSearchParams();
   const auth = useAuth();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [code, setCode] = useState("");
   const [step, setStep] = useState("credentials");
   const [infoMessage, setInfoMessage] = useState("");
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const p = readPendingOtp();
     if (!p?.email) return;
     setEmail(p.email);
     setStep("verify");
-    setInfoMessage("Enter the 6-digit code we sent (check email or backend terminal).");
+    setInfoMessage("Enter the 6-digit code we sent to your email.");
   }, []);
 
   async function onSubmitCredentials(e) {
@@ -76,22 +71,23 @@ function LoginPageInner() {
     setError("");
     setInfoMessage("");
     setLoading(true);
+
     try {
       const res = await api.login({ email, password });
       const needsOtp =
         res.requiresVerification === true ||
         res.requiresVerification === "true" ||
         res.requiresVerification === 1;
+
       if (needsOtp) {
         setPendingOtp(email.trim().toLowerCase());
-        setInfoMessage(res.message || "Check your email for a verification code.");
+        setInfoMessage(res.message || "Check your email for a 6-digit code.");
         setStep("verify");
         setCode("");
         return;
       }
-      setError(
-        "Server did not send a verification step. Restart the backend (latest code) and confirm API URL in .env.local."
-      );
+
+      setError("Server did not return verification step. Please restart backend.");
     } catch (err) {
       setError(err.message || "Login failed");
     } finally {
@@ -124,41 +120,29 @@ function LoginPageInner() {
       const res = await api.resendLoginOtp({ email, password });
       setInfoMessage(res.message || "New code sent.");
     } catch (err) {
-      setError(err.message || "Could not resend");
+      setError(err.message || "Could not resend code");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-slate-950 text-slate-100">
       <div className="container-page flex min-h-screen items-center justify-center py-10">
         <Card className="w-full max-w-md p-6">
           <div className="text-lg font-semibold">Welcome back</div>
-          <div className="mt-1 text-sm text-slate-300/80">Log in to generate and manage websites.</div>
+          <div className="mt-1 text-sm text-slate-300/80">Log in securely with email, password and OTP.</div>
 
           {step === "credentials" ? (
             <form onSubmit={onSubmitCredentials} className="mt-6 space-y-4">
               <Input label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-              <Input
-                label="Password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
+              <Input label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+
               {error ? <div className="rounded-xl border border-rose-900/50 bg-rose-950/40 p-3 text-sm">{error}</div> : null}
+
               <Button type="submit" className="w-full py-2.5" disabled={loading}>
-                {loading ? "Continuing..." : "Continue"}
+                {loading ? "Sending code..." : "Continue"}
               </Button>
-              <div className="flex items-center justify-between text-sm">
-                <Link
-                  href={`/forgot-password${params.get("next") ? `?next=${encodeURIComponent(params.get("next"))}` : ""}`}
-                  className="text-slate-300/80 hover:text-slate-100"
-                >
-                  Forgot password?
-                </Link>
-              </div>
             </form>
           ) : (
             <form onSubmit={onSubmitVerify} className="mt-6 space-y-4">
@@ -177,6 +161,7 @@ function LoginPageInner() {
               <Button type="submit" className="w-full py-2.5" disabled={loading || code.length !== 6}>
                 {loading ? "Verifying..." : "Verify and log in"}
               </Button>
+
               <div className="flex flex-wrap gap-3 text-sm">
                 <button
                   type="button"
@@ -203,17 +188,14 @@ function LoginPageInner() {
             </form>
           )}
 
-          {step === "credentials" ? (
-            <div className="mt-5 text-sm text-slate-300/80">
+          <div className="flex items-center justify-between mt-5 text-sm text-slate-300/80">
+            <div>
               Don&apos;t have an account?{" "}
-              <Link
-                href={`/signup${params.get("next") ? `?next=${encodeURIComponent(params.get("next"))}` : ""}`}
-                className="text-indigo-300 hover:text-indigo-200"
-              >
+              <Link href="/signup" className="text-indigo-300 hover:text-indigo-200">
                 Sign up
               </Link>
             </div>
-          ) : null}
+          </div>
         </Card>
       </div>
     </div>

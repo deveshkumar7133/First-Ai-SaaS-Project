@@ -90,9 +90,14 @@ export default function MyWebsitesPage() {
                     Created: {w.createdAt ? new Date(w.createdAt).toLocaleString() : "-"}
                   </div>
                 </div>
-                <Link href={`/preview/${w._id}`}>
-                  <Button variant="secondary">Preview</Button>
-                </Link>
+                <div className="flex flex-col gap-2">
+                  <Link href={`/build?id=${w._id}`}>
+                    <Button>Edit</Button>
+                  </Link>
+                  <Link href={`/preview/${w._id}`}>
+                    <Button variant="secondary">Preview</Button>
+                  </Link>
+                </div>
               </div>
             </Card>
           ))}
