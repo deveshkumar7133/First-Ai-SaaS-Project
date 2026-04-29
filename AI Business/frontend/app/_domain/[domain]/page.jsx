@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import dynamic from "next/dynamic";
+import { headers } from "next/headers";
 
 // Force ISR caching - Revalidate every 60 seconds
 export const revalidate = 60;
@@ -15,9 +16,18 @@ const MobileAppRenderer = dynamic(
 );
 
 async function getWebsiteData(domain) {
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+  const envApiUrl = process.env.NEXT_PUBLIC_API_URL;
+  let apiBase = envApiUrl;
+  if (!apiBase) {
+    const h = headers();
+    const protocol = h.get("x-forwarded-proto") || (process.env.NODE_ENV === "production" ? "https" : "http");
+    const host = h.get("host");
+    apiBase = host ? `${protocol}://${host}` : "";
+  }
+
+  const url = apiBase ? `${apiBase}/websites/by-domain?domain=${encodeURIComponent(domain)}` : `/websites/by-domain?domain=${encodeURIComponent(domain)}`;
   try {
-    const res = await fetch(`${API_URL}/websites/by-domain?domain=${encodeURIComponent(domain)}`, {
+    const res = await fetch(url, {
       next: { revalidate: 60 }
     });
     
